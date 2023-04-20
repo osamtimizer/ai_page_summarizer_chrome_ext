@@ -6,6 +6,9 @@
     "content_security_policy": {
       "extension_pages": "script-src 'self' ; object-src 'self'"
     },
+    "background": {
+        "script": "main.js"
+    },
     "action": {
       "default_popup": "index.html",
       "default_icon": {
@@ -20,5 +23,13 @@
       "32": "icons/Icon-192.png",
       "48": "icons/Icon-192.png",
       "128": "icons/Icon-192.png"
-    }
+    },
+    "permissions": [
+        "tabs",
+        "scripting",
+        "storage",
+        "contextMenus",
+        "clipboardRead",
+        "activeTab"
+    ]
   }
