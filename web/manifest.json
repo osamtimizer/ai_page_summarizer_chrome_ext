@@ -28,13 +28,14 @@
       "128": "icons/Icon-192.png"
     },
     "permissions": [
-        "activeTab",
-        "tabs",
-        "extension",
-        "scripting",
-        "storage",
-        "contextMenus",
-        "clipboardRead",
-        "activeTab"
+      "storage",
+      "activeTab",
+      "tabs",
+      "extension",
+      "scripting",
+      "storage",
+      "contextMenus",
+      "clipboardRead",
+      "activeTab"
     ]
   }

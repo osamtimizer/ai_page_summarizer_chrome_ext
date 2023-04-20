@@ -9,12 +9,14 @@ final myFutureProvider = FutureProvider<String>((ref) async {
     model: "gpt-3.5-turbo",
     messages: [
       OpenAIChatCompletionChoiceMessageModel(
-        content: result,
+        content:
+            "Please summarize the following text in the same language (For example, if the text is written in Japanese, you must answer in Japanese. If English, use English.).  $result",
         role: OpenAIChatMessageRole.user,
       ),
     ],
   );
-  return result;
+  final response = chatCompletion.choices[0].message.content;
+  return response;
 });
 
 class Home extends ConsumerWidget {
@@ -22,11 +24,44 @@ class Home extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("OpenAI Summarizer")),
+      body: Center(
+        child: _body(context, ref),
+      ),
+    );
+  }
+
+  Widget _body(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(myFutureProvider);
     return provider.when(
-      data: (data) => Text(data),
+      data: (data) => _data(context, ref, data),
       error: (err, stackTrace) => Text("err: $err"),
-      loading: () => const CircularProgressIndicator(),
+      loading: () => _loading(context, ref),
+    );
+  }
+
+  Widget _data(BuildContext context, WidgetRef ref, String data) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Text(
+        data,
+        style: const TextStyle(fontSize: 16),
+      ),
+    );
+  }
+
+  Widget _loading(BuildContext context, WidgetRef ref) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Text(
+          "Summarizing selected text...",
+          style: TextStyle(fontSize: 16),
+        ),
+        Spacer(),
+        CircularProgressIndicator(),
+      ],
     );
   }
 }
