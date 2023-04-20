@@ -1,11 +1,19 @@
 import 'package:ai_page_summarizer_chrome_ext/chrome_api.dart';
+import 'package:dart_openai/openai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final myFutureProvider = FutureProvider<String>((ref) async {
-  print("myfutureprovider");
   final result = await getSelectedText();
-  print(result);
+  OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat.create(
+    model: "gpt-3.5-turbo",
+    messages: [
+      OpenAIChatCompletionChoiceMessageModel(
+        content: result,
+        role: OpenAIChatMessageRole.user,
+      ),
+    ],
+  );
   return result;
 });
 
