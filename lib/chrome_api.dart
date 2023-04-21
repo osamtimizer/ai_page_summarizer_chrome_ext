@@ -10,3 +10,9 @@ external Object _getSelectedText();
 Future<String> getSelectedText() {
   return promiseToFuture(_getSelectedText());
 }
+
+@JS('getSavedApiKey')
+external Object _getSavedApiKey();
+Future<String> getSavedApiKey() {
+  return promiseToFuture(_getSavedApiKey());
+}

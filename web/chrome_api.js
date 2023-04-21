@@ -21,4 +21,18 @@ function queryTabs() {
   })
 }
 
-getSelectedText();
+async function getSavedApiKey() {
+  return promisifyChromeStorageGet();
+}
+
+function promisifyChromeStorageGet() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get({ "apiKey": "" }, function(data) {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(data.apiKey);
+      }
+    });
+  });
+}
