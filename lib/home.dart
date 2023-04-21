@@ -4,7 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final myFutureProvider = FutureProvider<String>((ref) async {
-  final result = await getSelectedText();
+  print("myfutureprovider");
+  final result = await getSelectedText().catchError((err) {
+    if (err.toString() == "no text selection") {
+      return "";
+    }
+
+    print("error occurred while getting selected text.");
+    throw Exception("Error occurred while getting selected text. err: $err");
+  });
+  if (result == "") {
+    print("no text selected.");
+    return "No text selected, nothing to summarize.";
+  }
   OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat.create(
     model: "gpt-3.5-turbo",
     messages: [
@@ -36,16 +48,17 @@ class Home extends ConsumerWidget {
     final provider = ref.watch(myFutureProvider);
     return provider.when(
       data: (data) => _data(context, ref, data),
-      error: (err, stackTrace) => Text("err: $err"),
+      error: (err, stackTrace) => _error(context, err),
       loading: () => _loading(context, ref),
     );
   }
 
   Widget _data(BuildContext context, WidgetRef ref, String data) {
+    print("received data is $data");
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Text(
-        data,
+        data == "" ? "no text selection" : data,
         style: const TextStyle(fontSize: 16),
       ),
     );
@@ -55,12 +68,30 @@ class Home extends ConsumerWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: const [
+        Spacer(),
         Text(
           "Summarizing selected text...",
           style: TextStyle(fontSize: 16),
         ),
         Spacer(),
         CircularProgressIndicator(),
+        Spacer(),
+      ],
+    );
+  }
+
+  Widget _error(BuildContext context, Object error) {
+    return Column(
+      children: [
+        const Spacer(),
+        const Text(
+          "Something wrong, did you register your OpenAI API KEY on options page?",
+        ),
+        const Spacer(),
+        Text(
+          "err: $error",
+        ),
+        const Spacer(),
       ],
     );
   }

@@ -6,16 +6,31 @@ async function getSelectedText() {
 }
 
 function queryTabs() {
-  return new Promise(resolve => {
+  console.log("queryTab");
+  return new Promise((resolve, reject) => {
     let result = null;
     chrome.tabs.query( {active:true, currentWindow:true}, async function(tabs) {
+      console.log("chrome.tabs.query");
       await chrome.tabs.sendMessage(tabs[0].id, {message: 'get selection'}, function(item) {
-        if(!item){
-          return;
+        console.log("chrome.tabs.sendMessage");
+        if (chrome.runtime.lastError) {
+          console.log("runtime error on chrome.runtime");
+          reject(chrome.runtime.lastError);
         }
+
+        if(!item){
+          reject("no text selection");
+        }
+
         result = item;
         resolve(result);
       });
+
+      if (chrome.runtime.lastError) {
+        console.log("runtime error on chrome.runtime");
+        reject(chrome.runtime.lastError);
+      }
+
       return true;
     });
   })
