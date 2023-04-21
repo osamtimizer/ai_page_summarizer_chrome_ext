@@ -2,9 +2,30 @@ import 'package:ai_page_summarizer_chrome_ext/chrome_api.dart';
 import 'package:dart_openai/openai.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod/src/framework.dart';
+
+enum TargetLanguage {
+  japanese,
+  english,
+}
+
+final targetLanguageProvider = FutureProvider<TargetLanguage>((ref) async {
+  final language = await getLanguage();
+  switch (language) {
+    case "":
+      return TargetLanguage.english;
+    case "english":
+      return TargetLanguage.english;
+    case "japanese":
+      return TargetLanguage.japanese;
+    default:
+      return TargetLanguage.english;
+  }
+});
 
 final myFutureProvider = FutureProvider<String>((ref) async {
   print("myfutureprovider");
+  final targetLanguage = await ref.watch(targetLanguageProvider.future);
   final result = await getSelectedText().catchError((err) {
     if (err.toString() == "no text selection") {
       return "";
@@ -17,12 +38,15 @@ final myFutureProvider = FutureProvider<String>((ref) async {
     print("no text selected.");
     return "No text selected, nothing to summarize.";
   }
+  print("selected language is $targetLanguage");
+  final content = targetLanguage == TargetLanguage.english
+      ? "Please summarize the following content in English.\n $result"
+      : "次に続く文章を日本語で要約してください:\n $result";
   OpenAIChatCompletionModel chatCompletion = await OpenAI.instance.chat.create(
     model: "gpt-3.5-turbo",
     messages: [
       OpenAIChatCompletionChoiceMessageModel(
-        content:
-            "Please summarize the following text in the same language (For example, if the text is written in Japanese, you must answer in Japanese. If English, use English.).  $result",
+        content: content,
         role: OpenAIChatMessageRole.user,
       ),
     ],

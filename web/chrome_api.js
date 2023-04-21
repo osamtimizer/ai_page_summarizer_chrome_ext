@@ -37,16 +37,32 @@ function queryTabs() {
 }
 
 async function getSavedApiKey() {
-  return promisifyChromeStorageGet();
+  return promisifyChromeStorageGetApiKey();
 }
 
-function promisifyChromeStorageGet() {
+function promisifyChromeStorageGetApiKey() {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get({ "apiKey": "" }, function(data) {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
         resolve(data.apiKey);
+      }
+    });
+  });
+}
+
+async function getLanguage() {
+  return promisifyChromeStorageGetLanguage();
+}
+
+function promisifyChromeStorageGetLanguage() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get({ "language": "" }, function(data) {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(data.language);
       }
     });
   });

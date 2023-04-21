@@ -16,3 +16,9 @@ external Object _getSavedApiKey();
 Future<String> getSavedApiKey() {
   return promiseToFuture(_getSavedApiKey());
 }
+
+@JS('getLanguage')
+external Object _getLanguage();
+Future<String> getLanguage() {
+  return promiseToFuture(_getLanguage());
+}
