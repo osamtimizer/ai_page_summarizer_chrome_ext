@@ -61,7 +61,7 @@ class Home extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text("OpenAI Summarizer")),
+      appBar: AppBar(title: const Text("Web Text Summarizer")),
       body: Center(
         child: _body(context, ref),
       ),
